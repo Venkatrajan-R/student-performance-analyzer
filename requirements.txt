@@ -1,22 +1,16 @@
 # Smart Student Performance Analyzer — Python Dependencies
-# Install with: pip install -r requirements.txt
-# Python >= 3.10 recommended
+# Compatible with Streamlit Cloud (Python 3.14)
 
 # ── Core Data Science ───────────────────────────────────────────
-pandas>=2.0,<2.3            # DataFrame operations, CSV ingestion, feature engineering
-numpy>=1.24,<2.0            # Numerical operations, array manipulation
+pandas>=2.0,<2.3
+numpy>=1.26,<2.0
 
 # ── Machine Learning ────────────────────────────────────────────
-scikit-learn>=1.3,<1.5      # LogisticRegression, StandardScaler, Pipeline, metrics
+scikit-learn>=1.3,<1.4
 
 # ── Visualization ───────────────────────────────────────────────
-matplotlib>=3.7,<3.9        # Core plotting library (histograms, bar charts, confusion matrix)
-seaborn>=0.12,<0.14         # Statistical plots (boxplot, heatmap) built on matplotlib
+matplotlib>=3.7,<3.9
+seaborn>=0.12,<0.14
 
 # ── Web Interface ───────────────────────────────────────────────
-streamlit>=1.30,<1.37       # Interactive web UI — compatible with Streamlit Cloud
-
-# ── Optional (for extended functionality) ───────────────────────
-# openpyxl>=3.1,<3.2        # Uncomment if Excel (.xlsx) export is needed
-# plotly>=5.0,<6.0          # Uncomment for interactive charts (replaces matplotlib)
-# sqlalchemy>=2.0,<2.1      # Uncomment for database backend (scalability path)
+streamlit>=1.30,<1.37
