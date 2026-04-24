@@ -847,6 +847,22 @@ def setup_page():
 
         /* Divider */
         hr { border-color: var(--border); }
+
+        /* ── Responsive breakpoints ── */
+        @media (max-width: 768px) {
+            .header-title { font-size: 1.3rem !important; }
+            .header-subtitle { font-size: 0.8rem !important; }
+            .metric-value { font-size: 1.4rem !important; }
+            .metric-card { padding: 0.9rem 0.8rem !important; }
+            .stTabs [data-baseweb="tab"] {
+                font-size: 0.75rem !important;
+                padding: 0.4rem 0.6rem !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .header-container { padding: 1rem 1.2rem !important; }
+            .metric-value { font-size: 1.2rem !important; }
+        }
     </style>
     """, unsafe_allow_html=True)
 
@@ -902,6 +918,14 @@ def main():
         at_risk_thresh = st.slider("At-Risk Threshold", 40, 70, AT_RISK_THRESHOLD, 5,
                                    help="Students below this overall average are flagged")
 
+        # ── Wire slider values into module-level globals so all functions
+        #    pick up the user-chosen thresholds instead of the hard-coded defaults.
+        import sys
+        _mod = sys.modules[__name__]
+        _mod.PASS_THRESHOLD = pass_thresh
+        _mod.OVERALL_PASS_THRESHOLD = pass_thresh
+        _mod.AT_RISK_THRESHOLD = at_risk_thresh
+
         st.markdown("---")
         st.markdown("### 📂 Data Upload")
         uploaded_file = st.file_uploader(
@@ -927,14 +951,16 @@ def main():
     if uploaded_file is None:
         # Landing state — show instructions
         st.markdown('<div class="section-header">How to get started</div>', unsafe_allow_html=True)
-        col1, col2, col3, col4 = st.columns(4)
         steps = [
             ("1️⃣", "Upload CSV", "Upload your student marks CSV via the sidebar"),
             ("2️⃣", "Analyze", "Instantly see class statistics and visualizations"),
             ("3️⃣", "Predict", "ML model predicts pass/fail risk for each student"),
             ("4️⃣", "Act", "Get personalized recommendations per student"),
         ]
-        for col, (icon, title, desc) in zip([col1, col2, col3, col4], steps):
+        # Responsive: 2 columns on narrow, 4 on wide — achieved via two rows of 2
+        step_row1 = st.columns(2)
+        step_row2 = st.columns(2)
+        for col, (icon, title, desc) in zip(step_row1 + step_row2, steps):
             with col:
                 st.markdown(f"""
                 <div class="metric-card" style="text-align:left; padding:1.4rem;">
@@ -980,19 +1006,21 @@ def main():
     with tabs[0]:
         st.markdown('<div class="section-header">Class-Level KPIs</div>', unsafe_allow_html=True)
 
-        c1, c2, c3, c4, c5, c6 = st.columns(6)
         cards = [
-            (c1, "Total Students", str(class_stats["total"]), "", "👥"),
-            (c2, "Class Average", f"{class_stats['class_avg']:.1f}", "out of 100", "📈"),
-            (c3, "Passing", str(class_stats["pass_count"]),
+            ("Total Students", str(class_stats["total"]), "", "👥"),
+            ("Class Average", f"{class_stats['class_avg']:.1f}", "out of 100", "📈"),
+            ("Passing", str(class_stats["pass_count"]),
              f"{100*class_stats['pass_count']/class_stats['total']:.0f}%", "✅"),
-            (c4, "Failing", str(class_stats["fail_count"]),
+            ("Failing", str(class_stats["fail_count"]),
              f"{100*class_stats['fail_count']/class_stats['total']:.0f}%", "❌"),
-            (c5, "Top Scorer", class_stats["topper_name"],
+            ("Top Scorer", class_stats["topper_name"],
              f"Avg: {class_stats['topper_avg']:.1f}", "🏆"),
-            (c6, "Needs Support", str(class_stats["at_risk_count"]), "at-risk students", "⚠️"),
+            ("Needs Support", str(class_stats["at_risk_count"]), "at-risk students", "⚠️"),
         ]
-        for col, label, value, sub, icon in cards:
+        # Responsive: 3 cards per row works on all screen sizes
+        row1_cols = st.columns(3)
+        row2_cols = st.columns(3)
+        for col, (label, value, sub, icon) in zip(row1_cols + row2_cols, cards):
             with col:
                 st.markdown(render_metric_card(label, value, sub, icon), unsafe_allow_html=True)
 
